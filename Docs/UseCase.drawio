@@ -1,0 +1,31 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.5 Chrome/126.0.6478.183 Electron/31.3.0 Safari/537.36" version="24.7.5">
+  <diagram name="Page-1" id="0_N_1LKbeVFeCn6TJ7LN">
+    <mxGraphModel dx="1434" dy="854" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="f3LtO-dksVEcjxAuZxSL-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;sketch=1;curveFitting=1;jiggle=2;shadow=1;" edge="1" parent="1" source="f3LtO-dksVEcjxAuZxSL-1" target="f3LtO-dksVEcjxAuZxSL-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3LtO-dksVEcjxAuZxSL-6" style="shape=connector;rounded=0;sketch=1;jiggle=2;curveFitting=1;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;shadow=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;endArrow=classic;" edge="1" parent="1" source="f3LtO-dksVEcjxAuZxSL-1" target="f3LtO-dksVEcjxAuZxSL-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3LtO-dksVEcjxAuZxSL-8" style="edgeStyle=none;shape=connector;rounded=0;sketch=1;jiggle=2;curveFitting=1;orthogonalLoop=1;jettySize=auto;html=1;shadow=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;endArrow=classic;" edge="1" parent="1" source="f3LtO-dksVEcjxAuZxSL-1" target="f3LtO-dksVEcjxAuZxSL-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3LtO-dksVEcjxAuZxSL-1" value="Usuário" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;sketch=1;curveFitting=1;jiggle=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="135" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="f3LtO-dksVEcjxAuZxSL-3" value="Realizar Login" style="ellipse;whiteSpace=wrap;html=1;shadow=1;sketch=1;jiggle=2;curveFitting=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;fillColor=default;" vertex="1" parent="1">
+          <mxGeometry x="270" y="35" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="f3LtO-dksVEcjxAuZxSL-5" value="Cadastrar Conta" style="ellipse;whiteSpace=wrap;html=1;shadow=1;sketch=1;jiggle=2;curveFitting=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;fillColor=default;" vertex="1" parent="1">
+          <mxGeometry x="270" y="130" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="f3LtO-dksVEcjxAuZxSL-7" value="Cadastar Lançamento" style="ellipse;whiteSpace=wrap;html=1;shadow=1;sketch=1;jiggle=2;curveFitting=1;strokeColor=default;align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=12;fontColor=default;labelBackgroundColor=default;fillColor=default;" vertex="1" parent="1">
+          <mxGeometry x="270" y="230" width="140" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
