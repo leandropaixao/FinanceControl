@@ -64,9 +64,9 @@ public class Entry
     /// <summary>
     /// Register date
     /// </summary>
-    public DateTime RegisterDate { get; set; }
+    public DateTime? RegisterDate { get; set; }
     /// <summary>
     /// Change Date
     /// </summary>    
-    public DateTime ChangeDate { get; set; }
+    public DateTime? ModificationDate { get; set; }
 }

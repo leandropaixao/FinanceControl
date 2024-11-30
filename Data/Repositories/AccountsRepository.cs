@@ -13,14 +13,14 @@ public class AccountsRepository : IRepository<Account>
         _accounts.Add(entity);
     }
 
-    public void Edit(Account registry)
+    public void Edit(Account entity)
     {
-        var accountEdit = _accounts.FirstOrDefault(x => x.Id == registry.Id);
+        var accountEdit = _accounts.FirstOrDefault(x => x.Id == entity.Id);
         if (accountEdit != null)
         {
-            accountEdit.Active = registry.Active;
-            accountEdit.Description = registry.Description;
-            accountEdit.InitialBalance = registry.InitialBalance;
+            accountEdit.Active = entity.Active;
+            accountEdit.Description = entity.Description;
+            accountEdit.InitialBalance = entity.InitialBalance;
             accountEdit.ModificationDate = DateTime.Now;
         }
     }

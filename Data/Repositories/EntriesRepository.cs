@@ -2,26 +2,9 @@ using FinanceControl.Models;
 
 namespace FinanceControl.Data.Repositories;
 
-public static class EntriesRepository
+public class EntriesRepository : IRepository<Entry>
 {
-    public static List<Entry> Entries { get => _entries; }
-    static readonly List<Entry> _entries = [];
-
-    public static void AddEntry(Entry entry)
-    {
-        _entries.Add(entry);
-    }
-
-    public static void EditEntry(Guid id, Entry entry)
-    {
-        var postingEdit = _entries.FirstOrDefault(x => x.Id == id);
-
-        if (postingEdit != null)
-        {
-            postingEdit = entry;
-            postingEdit.ChangeDate = DateTime.Now;
-        }
-    }
+    private static readonly List<Entry> _entries = [];
 
     public static bool RemoveEntry(Guid id)
     {
@@ -32,5 +15,41 @@ public static class EntriesRepository
             return true;
         }
         return false;
+    }
+
+    public void New(Entry entity)
+    {
+        _entries.Add(entity);
+    }
+
+    public void Edit(Entry entity)
+    {
+        var postingEdit = _entries.FirstOrDefault(x => x.Id == entity.Id);
+
+        if (postingEdit != null)
+        {
+            postingEdit = entity;
+            postingEdit.ModificationDate = DateTime.Now;
+        }
+    }
+
+    public bool Remove(Guid id)
+    {
+        var entry = _entries.FirstOrDefault(x => x.Id == id);
+        if (entry != null)
+        {
+            return _entries.Remove(entry);
+        }
+        return false;
+    }
+
+    public List<Entry> SearchAll()
+    {
+        return _entries;
+    }
+
+    public Entry? SearchById(Guid id)
+    {
+        return _entries.FirstOrDefault(x => x.Id == id);
     }
 }
