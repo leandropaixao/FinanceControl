@@ -21,12 +21,12 @@
         </ToolBarContent>
         <Columns>
             <PropertyColumn Property="x => x.Description" Title="Description"/>
-            <PropertyColumn Property="x => x.Amount" Title="Opening balance" Format="F2" />
-            <PropertyColumn Property="x => x.Interest" Title="Opening balance" Format="F2" />
-            <PropertyColumn Property="x => x.Discount" Title="Opening balance" Format="F2" />
-            <PropertyColumn Property="x => x.TotalPaid" Title="Opening balance" Format="F2" />
-            <PropertyColumn Property="x => x.DueDate" />
-            <PropertyColumn Property="x => x.PaymentDate" />
+            <PropertyColumn Property="x => x.Amount" Title="Amount" Format="F2" />
+            <PropertyColumn Property="x => x.Interest" Title="Interest" Format="F2" />
+            <PropertyColumn Property="x => x.Discount" Title="Discount" Format="F2" />
+            <PropertyColumn Property="x => x.TotalPaid" Title="Total paid" Format="F2" />
+            <PropertyColumn Property="x => x.DueDate" Title="Due date" />
+            <PropertyColumn Property="x => x.PaymentDate" Title="Payment date" />
             <TemplateColumn CellClass="d-flex justify-end">
                 <CellTemplate>
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="() => OnEditItemClicked(context.Item.Id)"/>

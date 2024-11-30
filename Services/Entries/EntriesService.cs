@@ -11,7 +11,7 @@ public class EntriesService : IEntriesService<Entry>
     public void New(Entry entity)
     {
         entity.RegisterDate = DateTime.Now;
-        _repository.Edit(entity);
+        _repository.New(entity);
     }
 
     public void Edit(Entry entity)
