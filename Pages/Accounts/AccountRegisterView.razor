@@ -1,0 +1,108 @@
+@page "/accounts/register"
+@page "/accounts/edit/{Id:guid}"
+@inherits LayoutComponentBase
+
+@using FinanceControl.Models
+@using FinanceControl.Services.Accounts
+@using Microsoft.EntityFrameworkCore.Storage.Json
+@inject IAccountsService<Account> AccountsService
+
+<EditForm Model="@AccountData" OnValidSubmit="Register">
+    <DataAnnotationsValidator/>
+    <MudContainer Class="mt-2" MaxWidth="MaxWidth.Large">
+
+        <MudGrid Class="mt-2">
+            <MudItem xs="8">
+                <MudText Typo="Typo.h5" GutterBottom="true">Account register</MudText>
+            </MudItem>
+        </MudGrid>
+
+        <MudGrid Spacing="2" Class="mt-1">
+            <MudItem xs="8">
+                <MudCheckBox @bind-Value="AccountData.Active" Label="Active" Color="Color.Primary"></MudCheckBox>
+            </MudItem>
+            <MudItem xs="8">
+                <MudGrid>
+                    <MudItem xs="12">
+                        <MudTextField T="string" Label="Description" @bind-Value="AccountData.Description" 
+                                      AutoFocus="true" For="@(() => AccountData.Description)"/>
+                    </MudItem>
+                    <MudItem xs="6">
+                        <MudTextField Label="Opening Balance" Adornment="Adornment.Start" 
+                                         AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2" 
+                                         @bind-Value="AccountData.InitialBalance" For="@(() => AccountData.InitialBalance)"/>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+        
+        
+        <MudGrid Spacing="2" Class="mt-1">
+            <MudItem xs="8">
+                <MudGrid>
+                    <MudItem xs="6">
+                        @if (AccountData.RegisterDate != null)
+                        {
+                            <MudTextField T="DateTime?" Format="yyyy/MM/dd hh:mm:ss" Label="Register Date" ReadOnly="true" 
+                                          @bind-Value="AccountData.RegisterDate"/>
+                        }
+                    </MudItem>
+                    <MudItem xs="6">
+                        @if (AccountData.ModificationDate != null)
+                        {
+                            <MudTextField T="DateTime?" Format="yyyy/MM/dd hh:mm:ss" Label="Change Date" ReadOnly="true"
+                                          @bind-Value="AccountData.ModificationDate"/>
+                        }
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    
+
+        <MudGrid Spacing="2" Class="mt-1">
+            <MudItem xs="8">
+                <MudGrid>
+                    <MudItem xs="8" Class="justify-left">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" DropShadow="false"
+                                   Color="Color.Tertiary" Class="mt-4">Save</MudButton>
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel" DropShadow="false"
+                                   OnClick="() => Cancel()"
+                                   Color="Color.Secondary" Class="mt-4">Cancel</MudButton>
+                    </MudItem>
+                </MudGrid>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</EditForm>
+
+@code{
+    [Parameter] public Guid Id { get; set; }
+    [Inject] NavigationManager? NavigationManager { get; set; }
+
+    protected Account AccountData { get; set; } = new();
+    
+    protected override void OnInitialized()
+    {
+        var account = AccountsService.SearchById(Id);
+        if (account != null)
+        {
+            AccountData = account;
+        }
+    }
+
+    void Cancel() => NavigationManager?.NavigateTo("/accounts/list");
+
+    void Register()
+    {
+        if (Id == Guid.Empty)
+        {
+            AccountsService.New(AccountData);
+        }
+        else
+        {
+            AccountsService.Edit(AccountData);
+        }
+
+        NavigationManager?.NavigateTo("/accounts/list");
+    }
+}

@@ -1,0 +1,85 @@
+@page "/accounts/list"
+@inherits LayoutComponentBase
+
+@using FinanceControl.Models
+@using FinanceControl.Services.Accounts
+@inject IAccountsService<Account> AccountsService
+
+<MudPopoverProvider />
+
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+    <MudDataGrid T="Account" MultiSelection="true" Items="@AccountList" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+                 Hideable="true">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">List of accounts</MudText>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlaylistAdd" Style="margin-left: 12px;" 
+                       Color="Color.Tertiary" OnClick="OnNewClicked">New</MudButton>
+            
+            <MudSpacer/>
+            <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                          AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Description" Title="Description"/>
+            <PropertyColumn Property="x => x.InitialBalance" Title="Opening balance" Format="F2" />
+            <PropertyColumn Property="x => x.CurrentBalance" Title="Current Balance" Format="F2" />
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="() => OnEditItemClicked(context.Item.Id)"/>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="() => OnDeleteClickedAsync(context.Item.Id, context.Item.Description)"/>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Account"/>
+        </PagerContent>
+    </MudDataGrid>
+</MudContainer>
+
+<MudMessageBox @ref="_mudMessageBox" Title="Warning" CancelText="Cancel">
+    <MessageContent>
+        Deleting "@_description" <b><i>cannot</i></b> be undone!
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Style="margin-left: 12px;" 
+                   StartIcon="@Icons.Material.Filled.DeleteForever">Delete!</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code {
+    MudMessageBox _mudMessageBox = default!;
+    string _searchString = string.Empty;
+    string _description = string.Empty;
+    
+    List<Account> AccountList => AccountsService.SearchAll();
+    [Inject] NavigationManager? NavigationManager { get; set; }
+    
+    void OnEditItemClicked(Guid id) => NavigationManager?.NavigateTo($"/accounts/edit/{id}");
+
+    void OnNewClicked() => NavigationManager?.NavigateTo("/accounts/register");
+
+    async Task OnDeleteClickedAsync(Guid id, string description)
+    {
+        _description = description;
+        var result = await _mudMessageBox.ShowAsync();
+        if (result == true)
+        {
+            Console.WriteLine(AccountsService.Remove(id) ? "Account removed with success" : "Account not removed");
+            StateHasChanged();
+        }
+    }
+    
+    Func<Account, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Description.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true; 
+        
+        if ($"{x.CurrentBalance} {x.CurrentBalance}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+}

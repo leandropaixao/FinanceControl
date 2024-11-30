@@ -1,0 +1,75 @@
+@page "/entries/list"
+@inherits EntriesListViewBase
+
+<h3>List of entries</h3>
+
+<div class=" col-md-8 row g-2">
+    <div class="form-control">
+        Search
+        <input type="text" class="" @bind="TextToSearch"/>
+        <button class="btn btn-success btn-sm" title="Search" @onclick="Search">
+            <span class="bi bi-search" aria-hidden="true"></span>
+        </button>
+        <button class="btn btn-primary btn-sm" title="New" @onclick="New">
+            <span class="bi bi-file-earmark-fill" aria-hidden="true"></span>
+            New
+        </button>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Interest</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Total paid</th>
+                <th scope="col">Due date</th>
+                <th scope="col">Payment date</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var   entry in EntriesList)
+            {
+                @if (!string.IsNullOrEmpty(Searched.Trim()))
+                {
+                    if (!entry.Description.Contains(Searched, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        continue;
+                    }
+                }
+                <tr>
+                    <td>
+                        @if (entry.Type == Models.PostingType.Credit)
+                        {
+                            <span class="bi bi-toggle2-on active-register"  aria-hidden="true"></span>
+                        }
+                        else
+                        {
+                            <span class="bi bi-toggle2-off inactive-register" aria-hidden="true"></span>
+                        }
+                    </td>
+                    <td>@entry.Description</td>
+                    <td>@entry.Amount.ToString("0.00")</td>
+                    <td>@entry.Interest.ToString("0.00")</td>
+                    <td>@entry.Discount.ToString("0.00")</td>
+                    <td>@entry.TotalPaid.ToString("0.00")</td>
+                    <td>@entry.DueDate</td>
+                    <td>@entry.PaymentDate</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" @onclick="() => Edit(entry.Id)" title="Edit">
+                            <span class="bi bi-pencil-square" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => Remove(entry.Id)" title="Delete">
+                            <span class="bi bi-trash" aria-hidden="true"></span>
+                        </button>
+                    </td>
+                </tr>
+                Counter++;
+            }
+        </tbody>
+        <caption>
+            Listing @Counter record(s). @(string.IsNullOrEmpty(Searched.Trim()) ? "" : $"Searching for \"{Searched}\"")
+        </caption>
+    </table>    
+</div>

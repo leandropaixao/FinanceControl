@@ -1,0 +1,67 @@
+@page "/entries/register"
+@page "/entries/edit/{Id:guid}"
+
+@inherits EntriesRegisterViewBase
+
+<h3>Entry register</h3>
+
+<EditForm Model="@EntryData" OnValidSubmit="Register" class="row-md-6 row g-2">
+    <DataAnnotationsValidator />
+    <div class="row-md-6 row g-1">
+        <div class="col-md-6">
+            <label class="form-label">Description</label>
+            <InputText class="form-control" @bind-Value=EntryData.Description></InputText>
+            <ValidationMessage For="@(() => EntryData.Description)" />
+        </div>
+    </div>
+    <div class="row-md-6 row g-1">
+        <div class="col-md-2">
+            <label class="form-label">Amount</label>
+            <InputNumber class="form-control" @bind-Value=EntryData.Amount 
+                @oninput="OnValueChange"></InputNumber>
+            <ValidationMessage For="@(() => EntryData.Amount)" />
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">Interest</label>
+            <InputNumber class="form-control" @bind-Value=EntryData.Interest
+                @oninput="OnValueChange"></InputNumber>
+            <ValidationMessage For="@(() => EntryData.Interest)" />
+        </div>
+        <div class="col-md-1">
+            <label class="form-label">Discount</label>
+            <InputNumber class="form-control" @bind-Value=EntryData.Discount HideSpinButtons="true"
+                @oninput="OnValueChange"></InputNumber>
+            <ValidationMessage For="@(() => EntryData.Discount)" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label">Total paid</label>
+            <InputNumber class="form-control" @bind-Value="TotalPaid" disabled></InputNumber>
+        </div>
+    </div>
+    <div class="row-md-6 row g-1">
+        <div class="col-md-3">
+            <label class="form-label">Due date</label>
+            <InputDate class="form-control" @bind-Value=EntryData.DueDate></InputDate>
+            <ValidationMessage For="@(() => EntryData.DueDate)" />
+        </div>
+        <div class="col-md-3">
+            <label class="form-label">Payment date</label>
+            <InputDate class="form-control" @bind-Value=EntryData.PaymentDate></InputDate>
+            <ValidationMessage For="@(() => EntryData.PaymentDate)" />
+        </div>
+    </div>
+
+    <div class="row-md-6 row g-1">
+        <div class="col-md-3">
+            <button class="btn btn-primary btn-sm" type="submit">
+                <span class="bi bi-floppy" aria-hidden="true"></span>
+                Register
+            </button>
+        
+            <NavLink href="accounts/list" class="btn btn-danger btn-sm" title="Cancel">
+                <span class="bi bi-x-lg" aria-hidden="true"></span>
+                Cancel
+            </NavLink>
+        </div>
+    </div>
+</EditForm>
