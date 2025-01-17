@@ -18,13 +18,13 @@
 
 @code {
     [CascadingParameter]
-    private MudDialogInstance _mudDialog { get; set; }
+    private MudDialogInstance? MudDialog { get; set; }
 
     [Parameter] public string TextTitle { get; set; } = string.Empty;
     [Parameter] public string TextMessage { get; set; } = string.Empty;
     [Parameter] public string TextButton { get; set; } = string.Empty;
     [Parameter] public Color ColorButton { get; set; } = Color.Error;
 
-    private void Confirm() => _mudDialog.Close(DialogResult.Ok(true));
-    private void Cancel() => _mudDialog.Cancel();
+    private void Confirm() => MudDialog?.Close(DialogResult.Ok(true));
+    private void Cancel() => MudDialog?.Cancel();
 }
