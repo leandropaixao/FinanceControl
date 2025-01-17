@@ -1,0 +1,40 @@
+﻿@using MudBlazor
+@using System.Timers
+
+<MudPaper Width="240px" Class="py-3" Elevation="0">
+    <MudNavMenu>
+        <MudText Typo="Typo.h6" Class="px-4">@_user</MudText>
+        <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">@CurrentTime</MudText>
+        <MudDivider Class="my-2" />
+        <MudNavLink Href="/" Match="NavLinkMatch.All">Dashboard</MudNavLink>
+        <MudNavLink Href="accounts/list">Accounts</MudNavLink>
+        <MudNavLink Href="entries/list">Entries</MudNavLink>
+    </MudNavMenu>
+</MudPaper>
+
+@code
+{
+    string _user = "Leandro Paixão";
+
+    private string CurrentTime { get; set; } = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+    private Timer _timer = new(60000);
+
+    protected override void OnInitialized()
+    {
+        _timer.Elapsed += UpdateTime!;
+        _timer.Start();
+
+        CurrentTime = DateTime.Now.ToString("dd/MM/yyy HH:mm");
+    }
+
+    private void UpdateTime(object sender, ElapsedEventArgs e)
+    {
+        CurrentTime = DateTime.Now.ToString("dd/MM/yyy HH:mm");
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
+    }
+}

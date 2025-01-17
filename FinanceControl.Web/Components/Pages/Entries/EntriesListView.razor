@@ -1,0 +1,109 @@
+@page "/entries/list"
+@inherits LayoutComponentBase
+@rendermode InteractiveServer
+
+@using FinanceControl.Web.Components.Pages.Utils
+@using MudBlazor
+@using FinanceControl.Web.Models
+@using FinanceControl.Web.Services.Entries
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IEntriesService<Entry> EntriesService 
+
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider/>
+
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+    <MudItem>
+        <MudText Typo="Typo.h6">List of entries</MudText>
+    </MudItem>
+    <MudDataGrid T="Entry" MultiSelection="true" Items="@_entriesList" SortMode="SortMode.Multiple" QuickFilter="@QuickFilter">
+        <ToolBarContent>
+            <MudItem Class="d-flex align-center" xs="12" sm="6">
+                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlaylistAdd" Class="ml-2"
+                           Color="Color.Tertiary" OnClick="OnNewClicked">New</MudButton>
+            </MudItem>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Description" Title="Description"/>
+            <PropertyColumn Property="x => x.Amount" Title="Amount" Format="F2"/>
+            <PropertyColumn Property="x => x.TotalTransactions" Title="Total paid" Format="F2"/>
+            <PropertyColumn Property="x => x.DueDate" Title="Due date" Format="yyyy-MM-dd"/>
+            <PropertyColumn Property="x => x.PaymentDate" Title="Payment date" Format="yyyy-MM-dd"/>
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit"
+                                   OnClick="() => EditItem(context.Item.Id)"/>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete"
+                                   OnClick="() => DeleteEntry(context.Item)"/>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Entry"/>
+        </PagerContent>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    string _searchString = string.Empty;
+    
+    List<Entry> _entriesList = [];
+    [Inject] NavigationManager? NavigationManager { get; set; }
+    
+    void EditItem(Guid id) => NavigationManager?.NavigateTo($"/entries/edit/{id}");
+
+    void OnNewClicked() => NavigationManager?.NavigateTo("/entries/register");
+
+    void DeleteEntry(Entry entry)
+    {
+        _ = OnDeleteClickedAsync(entry.Id, entry.Description);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    async Task LoadDataAsync()
+    {
+        _entriesList = await EntriesService.SearchAllAsync();
+    }
+    
+    async Task OnDeleteClickedAsync(Guid id, string description)
+    {
+        var parameters = new DialogParameters<MessageDialog>
+        {
+            { x => x.TextTitle, "Warning" },
+            { x => x.TextMessage, $"Deleting \"{description}\" cannot be undone! You confirm the deletion?" },
+            { x => x.TextButton, "Delete" },
+            { x => x.ColorButton, Color.Error },
+        };
+        var dialog = await DialogService.ShowAsync<MessageDialog>("", parameters);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            _ = await EntriesService.RemoveAsync(id);
+            Snackbar.Add("Record deleted", Severity.Success);
+            await LoadDataAsync();
+            StateHasChanged();
+        }
+    }
+    
+    Func<Entry, bool> QuickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Description.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true; 
+        
+        if ($"{x.Amount} {x.Interest} {x.TotalTransactions} {x.Discount}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+}

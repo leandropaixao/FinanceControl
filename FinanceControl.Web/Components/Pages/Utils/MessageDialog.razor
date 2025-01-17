@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Mvc
+@using MudBlazor
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @TextTitle
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudText Typo="Typo.h5" GutterBottom="true">@TextMessage</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="ColorButton" OnClick="Confirm">@TextButton</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance _mudDialog { get; set; }
+
+    [Parameter] public string TextTitle { get; set; } = string.Empty;
+    [Parameter] public string TextMessage { get; set; } = string.Empty;
+    [Parameter] public string TextButton { get; set; } = string.Empty;
+    [Parameter] public Color ColorButton { get; set; } = Color.Error;
+
+    private void Confirm() => _mudDialog.Close(DialogResult.Ok(true));
+    private void Cancel() => _mudDialog.Cancel();
+}

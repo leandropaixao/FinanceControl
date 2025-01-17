@@ -1,0 +1,107 @@
+@page "/accounts/list"
+@inherits LayoutComponentBase
+@rendermode InteractiveServer
+
+@using FinanceControl.Web.Components.Pages.Utils
+@using MudBlazor
+@using FinanceControl.Web.Models
+@using FinanceControl.Web.Services.Accounts
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IAccountsService<Account> AccountsService
+
+<MudPopoverProvider/>
+<MudDialogProvider />
+<MudSnackbarProvider/>
+
+<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
+    <MudItem>
+        <MudText Typo="Typo.h6">List of accounts</MudText>
+    </MudItem>
+    <MudDataGrid T="Account" MultiSelection="true" Items="@_accountList" SortMode="SortMode.Multiple" QuickFilter="@_quickFilter">
+        <ToolBarContent>
+            <MudItem Class="d-flex align-center" xs="12" sm="6">
+                <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                              AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlaylistAdd" Class="ml-2"
+                           Color="Color.Tertiary" OnClick="OnNewClicked">New</MudButton>
+            </MudItem>
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.Description" Title="Description"/>
+            <PropertyColumn Property="x => x.InitialBalance" Title="Opening balance" Format="F2"/>
+            <PropertyColumn Property="x => x.CurrentBalance" Title="Current Balance" Format="F2"/>
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="() => EditItem(context.Item.Id)"/>
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteAccount(context.Item)"/>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <PagerContent>
+            <MudDataGridPager T="Account"/>
+        </PagerContent>
+    </MudDataGrid>
+</MudContainer>
+
+@code {
+    string _searchString = string.Empty;
+    string _description = string.Empty;
+
+    List<Account> _accountList = [];
+    
+    [Inject] NavigationManager? NavigationManager { get; set; }
+    
+    void EditItem(Guid id) => NavigationManager?.NavigateTo($"/accounts/edit/{id}");
+
+    void OnNewClicked() => NavigationManager?.NavigateTo("/accounts/register");
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    async Task LoadDataAsync()
+    {
+        _accountList = await AccountsService.SearchAllAsync();
+    }
+
+    void DeleteAccount(Account account)
+    {
+        _ = OnDeleteClickedAsync(account.Id, account.Description);
+    }
+    
+    async Task OnDeleteClickedAsync(Guid id, string description)
+    {
+        var parameters = new DialogParameters<MessageDialog>
+        {
+            { x => x.TextTitle, "Warning" },
+            { x => x.TextMessage, $"Deleting \"{description}\" cannot be undone! You confirm the deletion?" },
+            { x => x.TextButton, "Delete" },
+            { x => x.ColorButton, Color.Error },
+        };
+        var dialog = await DialogService.ShowAsync<MessageDialog>("", parameters);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            _ = await AccountsService.RemoveAsync(id);
+            Snackbar.Add("Record deleted", Severity.Success);
+            await LoadDataAsync();
+            StateHasChanged();
+        }
+    }
+    
+    Func<Account, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.Description.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true; 
+        
+        if ($"{x.CurrentBalance} {x.CurrentBalance}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+}
