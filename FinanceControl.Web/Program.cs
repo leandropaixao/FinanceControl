@@ -16,9 +16,13 @@ builder.Services.AddRazorComponents()
 // PostgreSQL
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>(options => 
-    options.UseNpgsql(connectionString)
-        .EnableSensitiveDataLogging()
-        .LogTo(Console.WriteLine, LogLevel.Information));
+    options.UseNpgsql(connectionString));
+
+// For logs in db
+// builder.Services.AddDbContext<AppDbContext>(options => 
+//     options.UseNpgsql(connectionString)
+//         .EnableSensitiveDataLogging()
+//         .LogTo(Console.WriteLine, LogLevel.Information));
 
 builder.Services.AddScoped<IRepository<Account>, AccountsRepository>();
 builder.Services.AddScoped<IAccountsService<Account>, AccountsService>();
