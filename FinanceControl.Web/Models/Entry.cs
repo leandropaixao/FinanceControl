@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SecurityDriven;
 
 namespace FinanceControl.Web.Models;
 
@@ -25,7 +26,7 @@ public class Entry
     /// <summary>
     /// Posting Id
     /// </summary>
-    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid Id { get; init; } = FastGuid.NewGuid();
     /// <summary>
     /// Execute transaction 
     /// </summary>

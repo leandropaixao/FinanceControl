@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using SecurityDriven;
 
 namespace FinanceControl.Web.Models;
 
@@ -10,7 +11,7 @@ public class Account
     /// <summary>
     /// Identifier
     /// </summary>
-    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid Id { get; init; } = FastGuid.NewGuid();
     /// <summary>
     /// Informs whether the account is active
     /// </summary>
