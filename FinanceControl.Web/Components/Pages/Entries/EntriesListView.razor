@@ -1,18 +1,12 @@
 @page "/entries/list"
 @inherits LayoutComponentBase
-@rendermode InteractiveServer
 
 @using FinanceControl.Web.Components.Pages.Utils
-@using MudBlazor
 @using FinanceControl.Web.Models
 @using FinanceControl.Web.Services.Entries
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 @inject IEntriesService<Entry> EntriesService 
-
-<MudPopoverProvider />
-<MudDialogProvider />
-<MudSnackbarProvider/>
 
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
     <MudItem>

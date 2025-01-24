@@ -1,18 +1,12 @@
 @page "/accounts/list"
 @inherits LayoutComponentBase
-@rendermode InteractiveServer
 
 @using FinanceControl.Web.Components.Pages.Utils
-@using MudBlazor
 @using FinanceControl.Web.Models
 @using FinanceControl.Web.Services.Accounts
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IAccountsService<Account> AccountsService
-
-<MudPopoverProvider/>
-<MudDialogProvider />
-<MudSnackbarProvider/>
 
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
     <MudItem>
