@@ -1,10 +1,8 @@
 @page "/entries/register"
 @page "/entries/edit/{Id:guid}"
 @inherits LayoutComponentBase
-@rendermode InteractiveServer
 
 @using FinanceControl.Web.Components.Pages.Utils
-@using MudBlazor
 @using FinanceControl.Web.Models
 @using FinanceControl.Web.Services.Accounts
 @using FinanceControl.Web.Services.Entries
@@ -13,9 +11,6 @@
 @inject IEntriesOperations EntriesOperations
 @inject IEntriesService<Entry> EntriesService
 @inject IAccountsService<Account> AccountsService
-
-<MudPopoverProvider/>
-<MudDialogProvider/>
 
 <EditForm Model="@EntryData">
     <DataAnnotationsValidator/>
