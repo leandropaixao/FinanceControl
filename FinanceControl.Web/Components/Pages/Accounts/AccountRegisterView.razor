@@ -7,8 +7,8 @@
 @inject ISnackbar Snackbar
 @inject IAccountsService<Account> AccountsService
 
-<EditForm Model="@AccountData">
-    <DataAnnotationsValidator/>
+<EditForm Model="@AccountData" OnSubmit="@Register">
+    <DataAnnotationsValidator />
     <MudContainer Class="mt-2" MaxWidth="MaxWidth.Large">
         <MudGrid Class="mt-2">
             <MudItem xs="12" sm="6">
@@ -24,16 +24,16 @@
             <MudItem xs="12" sm="6">
                 <MudTextField T="string" Label="Description" @bind-Value="AccountData.Description"
                               ReadOnly="@AccountData.Movimented"
-                              AutoFocus="true" For="@(() => AccountData.Description)"/>
-                    
+                              AutoFocus="true" For="@(() => AccountData.Description)" />
+
             </MudItem>
         </MudGrid>
         <MudGrid Class="mt-1">
             <MudItem xs="12" sm="6">
-                <MudTextField Label="Opening Balance" Adornment="Adornment.Start" 
+                <MudTextField Label="Opening Balance" Adornment="Adornment.Start"
                               ReadOnly="@AccountData.Movimented"
-                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2" 
-                              @bind-Value="AccountData.InitialBalance" For="@(() => AccountData.InitialBalance)"/>
+                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
+                              @bind-Value="AccountData.InitialBalance" For="@(() => AccountData.InitialBalance)" />
             </MudItem>
         </MudGrid>
 
@@ -44,14 +44,14 @@
                 {
                     <MudItem xs="12" sm="6">
                         <MudTextField T="DateTime?" Format="yyyy-MM-dd HH:mm:ss" Label="Register Date" ReadOnly="true"
-                                      @bind-Value="@_localDateRegister"/>
+                                      @bind-Value="@_localDateRegister" />
                     </MudItem>
                 }
                 @if (AccountData.ModificationDate != null)
                 {
                     <MudItem xs="12" sm="6">
                         <MudTextField T="DateTime?" Format="yyyy-MM-dd HH:mm:ss" Label="Change Date" ReadOnly="true"
-                                      @bind-Value="@_localDateModification"/>
+                                      @bind-Value="@_localDateModification" />
                     </MudItem>
                 }
             </MudGrid>
@@ -59,27 +59,26 @@
 
         <MudGrid Spacing="2" Class="mt-1">
             <MudItem xs="8" Class="justify-left">
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" 
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled"
                            StartIcon="@Icons.Material.Filled.Save" DropShadow="false"
                            Disabled="@AccountData.Movimented"
-                           OnClick="() => Register()"
                            Color="Color.Tertiary" Class="mt-4">Save</MudButton>
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel" DropShadow="false"
                            OnClick="() => Cancel()"
                            Color="Color.Secondary" Class="mt-4">Cancel</MudButton>
             </MudItem>
         </MudGrid>
-            
+
     </MudContainer>
 </EditForm>
 
-@code{
+@code {
     [Parameter] public Guid Id { get; set; }
     [Inject] NavigationManager? NavigationManager { get; set; }
 
     protected Account AccountData { get; set; } = new();
     private DateTime? _localDateRegister, _localDateModification;
-    
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -103,8 +102,13 @@
 
     void Cancel() => NavigationManager?.NavigateTo("/accounts/list");
 
-    void Register()
+    void Register(EditContext editContext)
     {
+        if (!editContext.Validate())
+        {
+            return;
+        }
+
         if (Id == Guid.Empty)
         {
             AccountsService.NewAsync(AccountData);
