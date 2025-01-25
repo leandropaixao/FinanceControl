@@ -1,11 +1,12 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>FinanceControl.Web</RootNamespace>
-    </PropertyGroup>
+      <UserSecretsId>0f0c03bc-127b-4040-8787-c89779fd1765</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="FastGuid" Version="1.1.0" />
