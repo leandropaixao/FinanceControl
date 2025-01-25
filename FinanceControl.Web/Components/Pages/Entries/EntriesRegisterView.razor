@@ -12,27 +12,27 @@
 @inject IEntriesService<Entry> EntriesService
 @inject IAccountsService<Account> AccountsService
 
-<EditForm Model="@EntryData">
-    <DataAnnotationsValidator/>
+<EditForm Model="@EntryData" OnSubmit="@Register">
+    <DataAnnotationsValidator />
     <MudContainer Class="mt-2" MaxWidth="MaxWidth.Large">
         <MudGrid Class="mt-2">
             <MudItem xs="12" sm="6">
                 <MudText Typo="Typo.h5" GutterBottom="true">Entry register</MudText>
             </MudItem>
-            
+
             @if (EntryData.ExecutedTransaction)
             {
                 <MudItem xs="12" sm="12">
                     <MudText Typo="Typo.h6" GutterBottom="true" Color="Color.Success">Transaction confirmed</MudText>
                 </MudItem>
             }
-            
+
             <MudItem xs="12" sm="12">
                 <MudTextField T="string" Label="Description" @bind-Value="EntryData.Description"
-                              ReadOnly="@EntryData.ExecutedTransaction"
-                              AutoFocus="true" For="@(() => EntryData.Description)"/>
+                ReadOnly="@EntryData.ExecutedTransaction"
+                AutoFocus="true" For="@(() => EntryData.Description)" />
             </MudItem>
-            
+
             <MudItem xs="12" sm="6">
                 <MudSelect T="EntryType" Label="Type" @bind-Value="EntryData.Type" ReadOnly="@EntryData.ExecutedTransaction">
                     @foreach (var type in Enum.GetValues<EntryType>())
@@ -50,81 +50,81 @@
                     }
                 </MudSelect>
             </MudItem>
-            
+
             <MudItem xs="12" sm="6">
                 <MudTextField Label="Amount" Adornment="Adornment.Start" ReadOnly="@EntryData.ExecutedTransaction"
-                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
-                              @bind-Value="EntryData.Amount" For="@(() => EntryData.Amount)"/>
+                AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
+                @bind-Value="EntryData.Amount" For="@(() => EntryData.Amount)" />
             </MudItem>
 
             <MudItem xs="12" sm="6">
                 <MudDatePicker Label="Due Date" ReadOnly="@EntryData.ExecutedTransaction"
-                               ShowToolbar="false"
-                               Mask="@(new DateMask("0000-00-00"))" 
-                               DateFormat="yyyy-MM-dd"
-                               @bind-Date="@_dueDate"
-                               For="@(() => _dueDate)"/>
+                ShowToolbar="false"
+                Mask="@(new DateMask("0000-00-00"))"
+                DateFormat="yyyy-MM-dd"
+                @bind-Date="@_dueDate"
+                For="@(() => _dueDate)" />
             </MudItem>
-        
+
             <MudItem xs="12" sm="6">
                 <MudTextField Label="Discount" Adornment="Adornment.Start" ReadOnly="@EntryData.ExecutedTransaction"
-                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
-                              @bind-Value="EntryData.Discount" For="@(() => EntryData.Discount)"/>
+                AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
+                @bind-Value="EntryData.Discount" For="@(() => EntryData.Discount)" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTextField Label="Interest" Adornment="Adornment.Start" ReadOnly="@EntryData.ExecutedTransaction"
-                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
-                              @bind-Value="EntryData.Interest" For="@(() => EntryData.Interest)"/>
+                AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
+                @bind-Value="EntryData.Interest" For="@(() => EntryData.Interest)" />
             </MudItem>
             <MudItem xs="12" sm="6">
                 <MudTextField Label="Total transactions" Adornment="Adornment.Start" ReadOnly="true"
-                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
-                              @bind-Value="EntryData.TotalTransactions" For="@(() => EntryData.TotalTransactions)"/>
+                AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
+                @bind-Value="EntryData.TotalTransactions" For="@(() => EntryData.TotalTransactions)" />
             </MudItem>
         </MudGrid>
-        
+
         @if (EntryData.RegisterDate != null || EntryData.ModificationDate != null)
-        {   
+        {
             <MudGrid Class="mt-2">
                 @if (EntryData.RegisterDate != null)
                 {
                     <MudItem xs="12" sm="6">
                         <MudTextField T="DateTime?" Format="yyyy/MM/dd hh:mm:ss" Label="Register Date" ReadOnly="true"
-                                      @bind-Value="@_localDateRegister"/>
+                        @bind-Value="@_localDateRegister" />
                     </MudItem>
                 }
                 @if (EntryData.ModificationDate != null)
                 {
                     <MudItem xs="12" sm="6">
                         <MudTextField T="DateTime?" Format="yyyy/MM/dd hh:mm:ss" Label="Change Date" ReadOnly="true"
-                                      @bind-Value="@_localDateModification"/>
+                        @bind-Value="@_localDateModification" />
                     </MudItem>
                 }
             </MudGrid>
         }
-            
+
         <MudGrid Spacing="2" Class="mt-1">
             <MudItem xs="8" Class="d-flex justify-left">
                 @if (Id != Guid.Empty)
                 {
                     <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.CurrencyExchange"
-                               OnClick="ConfirmTransactionAsync"
-                               Disabled="@EntryData.ExecutedTransaction"
-                               Color="Color.Primary" Class="mt-4 me-1">Confirm transaction</MudButton>
+                    OnClick="ConfirmTransactionAsync"
+                    Disabled="@EntryData.ExecutedTransaction"
+                    Color="Color.Primary" Class="mt-4 me-1">Confirm transaction</MudButton>
                 }
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save"
-                           OnClick="() => Register()"
-                           Disabled="@EntryData.ExecutedTransaction"
-                           Color="Color.Tertiary" Class="mt-4 me-1">Save</MudButton>
+                ButtonType="ButtonType.Submit"
+                Disabled="@EntryData.ExecutedTransaction"
+                Color="Color.Tertiary" Class="mt-4 me-1">Save</MudButton>
                 <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel"
-                           OnClick="() => Cancel()"
-                           Color="Color.Secondary" Class="mt-4 me-1">Cancel</MudButton>
+                OnClick="() => Cancel()"
+                Color="Color.Secondary" Class="mt-4 me-1">Cancel</MudButton>
             </MudItem>
         </MudGrid>
     </MudContainer>
 </EditForm>
 
-@code{
+@code {
     [Parameter] public Guid Id { get; set; }
     [Inject] private NavigationManager? NavigationManager { get; set; }
 
@@ -165,19 +165,24 @@
             }
         }
     }
-    
+
     private DateTime ConvertToLocalTime(DateTime utcDate)
         => TimeZoneInfo.ConvertTimeFromUtc(utcDate, TimeZoneInfo.Local);
 
     void Cancel() => NavigationManager?.NavigateTo("/entries/list");
 
-    void Register()
+    void Register(EditContext editContext)
     {
         if (_dueDate.HasValue)
         {
             EntryData.DueDate = DateTime.SpecifyKind(_dueDate.Value, DateTimeKind.Utc);
         }
-        
+
+        if (!editContext.Validate())
+        {
+            return;
+        }
+
         if (Id == Guid.Empty)
         {
             EntriesService.NewAsync(EntryData);
@@ -189,7 +194,7 @@
         Snackbar.Add("Record saved", Severity.Success);
         NavigationManager?.NavigateTo("/entries/list");
     }
-   
+
     async Task ConfirmTransactionAsync()
     {
         var parameters = new DialogParameters<MessageDialog>
