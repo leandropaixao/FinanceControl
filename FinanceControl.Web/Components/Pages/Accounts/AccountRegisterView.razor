@@ -57,17 +57,15 @@
             </MudGrid>
         }
 
-        <MudGrid Spacing="2" Class="mt-1">
-            <MudItem xs="8" Class="justify-left">
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.Save" DropShadow="false"
-                           Disabled="@AccountData.Movimented"
-                           Color="Color.Tertiary" Class="mt-4">Save</MudButton>
-                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel" DropShadow="false"
-                           OnClick="() => Cancel()"
-                           Color="Color.Secondary" Class="mt-4">Cancel</MudButton>
-            </MudItem>
-        </MudGrid>
+        <MudContainer Class="d-flex flex-wrap gap-1 mt-2 ">
+            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled"
+                       StartIcon="@Icons.Material.Filled.Save" DropShadow="false"
+                       Disabled="@AccountData.Movimented"
+                       Color="Color.Tertiary" Class="mt-4">Save</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel" DropShadow="false"
+                       OnClick="() => Cancel()"
+                       Color="Color.Secondary" Class="mt-4">Cancel</MudButton>
+        </MudContainer>
 
     </MudContainer>
 </EditForm>
