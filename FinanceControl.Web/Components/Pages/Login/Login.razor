@@ -1,0 +1,66 @@
+﻿@page "/login"
+@layout LoginLayout
+@attribute [AllowAnonymous]
+
+@using FinanceControl.Web.Auth
+
+@inject ISnackbar Snackbar
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthState
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="6">
+        <MudPaper Class="pa-4 mt-4 d-flex justify-center align-center" Style="height: 200px;">
+            <MudImage Src="/img/finance_logo.png" Elevation="25"
+                      Class="rounded-lg white justify-center"
+                      Style="width: 150px; height: auto;" />
+        </MudPaper>
+        <MudForm @bind-IsValid="@_success">
+            <MudPaper Class="pa-4 mt-4">
+                <MudTextField T="string" Label="User name" Required="true" @ref="_userNameField"
+                              RequiredError="User name is required" />
+                <MudTextField T="string" Label="Password" @ref="_pwField"
+                              InputType="InputType.Password"
+                              Required="true"
+                              RequiredError="Password is required" />
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Tertiary"
+                           OnClick="AttemptLogin" DropShadow="false">Login</MudButton>
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" Class="mx-2"
+                           OnClick="RedirectToRegister">Register</MudButton>
+            </MudPaper>
+        </MudForm>
+    </MudItem>
+</MudGrid>
+
+@code {
+    bool _success;
+
+    MudTextField<string>? _userNameField;
+    MudTextField<string>? _pwField;
+
+    async Task AttemptLogin()
+    {
+        if (string.IsNullOrWhiteSpace(_userNameField?.Value) || string.IsNullOrWhiteSpace(_pwField?.Value))
+        {
+            Snackbar.Add("Fill in the required fields.", Severity.Info);
+            return;
+        }
+        var success = await ((CustomAuthenticationStateProvider)AuthState).Login(_userNameField?.Value, _pwField?.Value);
+
+        if (!success)
+        {
+            Snackbar.Add("User name or password is not valid.", Severity.Error);
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+    }
+
+    protected void RedirectToRegister()
+    {
+        NavigationManager.NavigateTo("/register");
+    }
+}

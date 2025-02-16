@@ -1,5 +1,6 @@
 ﻿using FinanceControl.Web.Data.Repositories;
 using FinanceControl.Web.Models;
+using FinanceControl.Web.Services.Users;
 
 namespace FinanceControl.Web.Services.Accounts;
 

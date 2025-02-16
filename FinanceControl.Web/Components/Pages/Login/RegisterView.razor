@@ -1,0 +1,85 @@
+﻿@page "/register"
+@layout LoginLayout
+@attribute [AllowAnonymous]
+
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using FinanceControl.Web.Models
+@using FinanceControl.Web.Services.Users
+@inject ISnackbar Snackbar
+@inject IUserService<User> UserService
+
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="6">
+        <EditForm Model="@User" OnSubmit="@Register">
+            <MudPaper Class="pa-4">
+                <MudTextField T="string" Label="User Name" @bind-value="User.Username"
+                              For="@(() => User.Username)" />
+                <MudTextField T="string" Label="Password" HelperText="Choose a strong password"
+                              @bind-value="User.PasswordHash"
+                              InputType="InputType.Password"
+                              For="@(() => User.PasswordHash)" />
+                <MudTextField T="string"
+                              Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                              Validation="@(new Func<string, string>(PasswordMatch))" />
+                @* <div class="d-flex">
+                    <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+                        <MudRadio Value="@("Personal")">Personal</MudRadio>
+                        <MudRadio Value="@("Professional")">Professional</MudRadio>
+                    </MudRadioGroup>
+                </div>
+                <div class="d-flex align-center justify-space-between">
+                    <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Label="I agree!" />
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!success)" Class="ml-auto">Register</MudButton>
+                </div> *@
+            </MudPaper>
+            <MudPaper Class="pa-4 mt-4">
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" DropShadow="false">Register</MudButton>
+                <MudButton ButtonType="ButtonType.Button" OnClick="@(() => NavigateLogin())" Variant="Variant.Filled" Color="Color.Secondary" DropShadow="false" Class="mx-2">Cancel</MudButton>
+            </MudPaper>
+        </EditForm>
+    </MudItem>
+</MudGrid>
+@code {
+    // bool success;
+    // string[] errors = { };
+    protected User User { get; set; } = new();
+
+    [Inject] NavigationManager? NavigationManager { get; set; }
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return "Password must be at least of length 8";
+        if (!Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Password must contain at least one capital letter";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Password must contain at least one digit";
+    }
+
+    private string PasswordMatch(string arg) => User.PasswordHash != arg ? "Passwords don't match" : string.Empty;
+
+    private void Register(EditContext editContext)
+    {
+        if (!editContext.Validate())
+        {
+            return;
+        }
+
+        UserService.NewAsync(User);
+        Snackbar.Add("User registered", Severity.Success);
+        NavigateLogin();
+    }
+
+    void NavigateLogin()
+    {
+        NavigationManager?.NavigateTo("/login");
+    }
+}

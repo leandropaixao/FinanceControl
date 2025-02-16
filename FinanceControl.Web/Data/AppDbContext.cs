@@ -9,6 +9,7 @@ public class AppDbContext: DbContext
     
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Entry> Entries { get; set; }
+    public DbSet<User> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -17,5 +18,6 @@ public class AppDbContext: DbContext
         // Define the schema with 'public' for all entities
         modelBuilder.Entity<Account>().ToTable("Accounts", "public");
         modelBuilder.Entity<Entry>().ToTable("Entries", "public");   
+        modelBuilder.Entity<User>().ToTable("Users", "public");   
     }
 }

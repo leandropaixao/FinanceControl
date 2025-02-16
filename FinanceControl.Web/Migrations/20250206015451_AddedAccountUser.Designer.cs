@@ -3,6 +3,7 @@ using System;
 using FinanceControl.Web.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FinanceControl.Web.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250206015451_AddedAccountUser")]
+    partial class AddedAccountUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,13 +54,7 @@ namespace FinanceControl.Web.Migrations
                     b.Property<DateTime?>("RegisterDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Accounts", "public");
                 });
@@ -106,15 +103,9 @@ namespace FinanceControl.Web.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Entries", "public");
                 });
@@ -142,46 +133,15 @@ namespace FinanceControl.Web.Migrations
                     b.ToTable("Users", "public");
                 });
 
-            modelBuilder.Entity("FinanceControl.Web.Models.Account", b =>
-                {
-                    b.HasOne("FinanceControl.Web.Models.User", "User")
-                        .WithOne("Account")
-                        .HasForeignKey("FinanceControl.Web.Models.Account", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("FinanceControl.Web.Models.Entry", b =>
                 {
                     b.HasOne("FinanceControl.Web.Models.Account", "Account")
-                        .WithMany("Entries")
+                        .WithMany()
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FinanceControl.Web.Models.User", "User")
-                        .WithOne("Entry")
-                        .HasForeignKey("FinanceControl.Web.Models.Entry", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Account");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FinanceControl.Web.Models.Account", b =>
-                {
-                    b.Navigation("Entries");
-                });
-
-            modelBuilder.Entity("FinanceControl.Web.Models.User", b =>
-                {
-                    b.Navigation("Account");
-
-                    b.Navigation("Entry");
                 });
 #pragma warning restore 612, 618
         }

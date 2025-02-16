@@ -34,11 +34,11 @@ public class Account
         {
             _initialBalance = Math.Round(value, 2);
             CurrentBalance = _initialBalance;
-        }   
+        }
     }
-    
+
     private decimal _initialBalance;
-    
+
     /// <summary>
     /// Current balance
     /// </summary>
@@ -65,4 +65,13 @@ public class Account
     {
         CurrentBalance += value;
     }
+
+    //Relationships
+    
+    // User
+    public Guid UserId { get; set; }
+    public User User { get; set; } = null!;
+
+    // Entries
+    public List<Entry> Entries { get; set; } = new();
 }
