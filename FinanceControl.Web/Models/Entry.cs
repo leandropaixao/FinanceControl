@@ -75,9 +75,15 @@ public class Entry
     /// Change Date
     /// </summary>    
     public DateTime? ModificationDate { get; set; }
-    /// <summary>
-    /// Related account
-    /// </summary>
+        
+    //Relationships
+    // User
+    public Guid UserId { get; set; }
+    public User User { get; set; } = null!;
+
+    //Account
+    public Guid AccountId { get; set; }
+
     [Required(ErrorMessage = "The related account is required")]
-    public Account? Account { get; set; }
+    public Account Account { get; set; } = null!;
 }

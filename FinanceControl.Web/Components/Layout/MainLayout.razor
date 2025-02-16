@@ -1,25 +1,35 @@
 ﻿@inherits LayoutComponentBase
 
+@* @inject AuthenticationStateProvider AuthStateProvider *@
+@inject NavigationManager NavigationManager
+
 <MudThemeProvider IsDarkMode="true" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
-
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudSpacer />
-    </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h5" Class="mt-1">Finance Control</MudText>
-        </MudDrawerHeader>
-        <NavMenu/>
-    </MudDrawer>
-    <MudMainContent>
-        @Body
-    </MudMainContent>
-</MudLayout>
+<AuthorizeView>
+    <Authorized>
+        <MudLayout>
+            <MudAppBar Elevation="1">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
+                <MudText Typo="Typo.h5" Class="ml-3">Finance Control</MudText>
+                <MudSpacer />
+                <MudTooltip Text="Logout" Color="Color.Secondary" Placement="Placement.Bottom" Arrow="true">
+                    <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" Edge="Edge.End" OnClick="@(() => Logout())" />
+                </MudTooltip>
+            </MudAppBar>
+            <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+                <NavMenu />
+            </MudDrawer>
+            <MudMainContent>
+                @Body
+            </MudMainContent>
+        </MudLayout>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
     bool _drawerOpen = true;
@@ -27,5 +37,10 @@
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+
+    void Logout()
+    {
+        NavigationManager.NavigateTo("/logout");
     }
 }

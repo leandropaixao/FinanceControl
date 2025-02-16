@@ -1,0 +1,14 @@
+﻿@page "/logout"
+@using FinanceControl.Web.Auth
+
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthState
+
+@code {
+    
+    protected override void OnInitialized()
+    {
+       ((CustomAuthenticationStateProvider)AuthState).Logout();
+       NavigationManager.NavigateTo("/");
+    }
+}
