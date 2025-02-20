@@ -101,7 +101,7 @@
 
     void Cancel() => NavigationManager?.NavigateTo("/accounts/list");
 
-    async void Register(EditContext editContext)
+    async Task Register(EditContext editContext)
     {
         if (!editContext.Validate())
         {
@@ -112,7 +112,7 @@
 
         if (user == null)
         {
-            Snackbar.Add("User is not loged", Severity.Error);
+            Snackbar.Add("User not logged in", Severity.Error);
             NavigationManager?.NavigateTo("/logout");
             return;
         }

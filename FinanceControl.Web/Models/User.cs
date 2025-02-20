@@ -10,8 +10,8 @@ namespace FinanceControl.Web.Models
         public string Role { get; set; } = "User"; // "Admin", "User", etc.
 
         //Relationships
-        public Account? Account { get; set; }
-        public Entry? Entry { get; set; }
+        public List<Account> Account { get; set; } = new();
+        public List<Entry> Entry { get; set; } = new();
     }
 
 }

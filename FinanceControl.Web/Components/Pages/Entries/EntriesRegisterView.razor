@@ -11,6 +11,7 @@
 @inject IEntriesOperations EntriesOperations
 @inject IEntriesService<Entry> EntriesService
 @inject IAccountsService<Account> AccountsService
+@inject IUserService<User> UserService
 
 <EditForm Model="@EntryData" OnSubmit="@Register">
     <DataAnnotationsValidator />
@@ -169,7 +170,7 @@
 
     void Cancel() => NavigationManager?.NavigateTo("/entries/list");
 
-    void Register(EditContext editContext)
+    async Task Register(EditContext editContext)
     {
         if (_dueDate.HasValue)
         {
@@ -181,13 +182,23 @@
             return;
         }
 
+        User? user = await UserService.GetCurrentUser();
+
+        if (user == null)
+        {
+            Snackbar.Add("User not logged in");
+            NavigationManager?.NavigateTo("/logout");
+            return;
+        }
+
+        EntryData.User = user;
         if (Id == Guid.Empty)
         {
-            EntriesService.NewAsync(EntryData);
+            await EntriesService.NewAsync(EntryData);
         }
         else
         {
-            EntriesService.EditAsync(EntryData);
+            await EntriesService.EditAsync(EntryData);
         }
         Snackbar.Add("Record saved", Severity.Success);
         NavigationManager?.NavigateTo("/entries/list");
