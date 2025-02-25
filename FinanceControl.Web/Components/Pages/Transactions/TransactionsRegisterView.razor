@@ -1,0 +1,177 @@
+﻿@page "/transactions"
+@inherits LayoutComponentBase
+
+@using FinanceControl.Web.Components.Pages.Utils
+@using FinanceControl.Web.Models
+@using FinanceControl.Web.Services.Accounts
+@using FinanceControl.Web.Services.Entries
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IEntriesOperations EntriesOperations
+@inject IEntriesService<Entry> EntriesService
+@inject IAccountsService<Account> AccountsService
+@inject IUserService<User> UserService
+
+<EditForm Model="@OriginEntryData" OnSubmit="@Register">
+    <DataAnnotationsValidator />
+    <MudContainer Class="mt-2" MaxWidth="MaxWidth.Large">
+        <MudGrid Class="mt-2">
+            <MudItem xs="12" sm="6">
+                <MudText Typo="Typo.h5" GutterBottom="true">Transactions register</MudText>
+            </MudItem>
+
+            @if (OriginEntryData.ExecutedTransaction)
+            {
+                <MudItem xs="12" sm="12">
+                    <MudText Typo="Typo.h6" GutterBottom="true" Color="Color.Success">Transaction confirmed</MudText>
+                </MudItem>
+            }
+
+            <MudItem xs="12" sm="12">
+                <MudTextField T="string" Label="Description" @bind-Value="OriginEntryData.Description"
+                              ReadOnly="@OriginEntryData.ExecutedTransaction"
+                              AutoFocus="true" For="@(() => OriginEntryData.Description)" />
+            </MudItem>
+            
+            <MudItem xs="12" sm="6">
+                <MudSelect T="Account" Label="Origin account" @bind-Value="OriginAccount">
+                    @foreach (var account in OriginAccounts)
+                    {
+                        <MudSelectItem Value="@account">@account.Description</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+            
+            <MudItem xs="12" sm="6">
+                <MudSelect T="Account" Label="Destination account" @bind-Value="DestinationAccount">
+                    @foreach (var account in DestinationAccounts)
+                    {
+                        <MudSelectItem Value="@account">@account.Description</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudTextField Label="Amount" Adornment="Adornment.Start"
+                              AdornmentIcon="@Icons.Material.Filled.AttachMoney" Format="F2"
+                              @bind-Value="OriginEntryData.Amount" For="@(() => OriginEntryData.Amount)" />
+            </MudItem>
+
+            <MudItem xs="12" sm="6">
+                <MudDatePicker Label="Transaction Date"
+                               ShowToolbar="false"
+                               Mask="@(new DateMask("0000-00-00"))"
+                               DateFormat="yyyy-MM-dd"
+                               @bind-Date="@_transactionDate"
+                               For="@(() => _transactionDate)" />
+            </MudItem>
+            
+        </MudGrid>
+
+        <MudContainer Class="d-flex flex-wrap gap-1 mt-2 ">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save"
+                        ButtonType="ButtonType.Submit"
+                        Color="Color.Tertiary" Class="mt-4 me-1">Save</MudButton>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Cancel"
+                        OnClick="() => Cancel()"
+                        Color="Color.Secondary" Class="mt-4 me-1">Cancel</MudButton>
+        </MudContainer>
+    </MudContainer>
+</EditForm>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    [Inject] private NavigationManager? NavigationManager { get; set; }
+
+    private Entry OriginEntryData { get; set; } = new();
+    private Entry DestinationEntryData { get; set; } = new();
+    private List<Account> OriginAccounts { get; set; } = [];
+    private List<Account> DestinationAccounts { get; set; } = [];
+    
+    private Account OriginAccount { get; set; } = new();
+    private Account DestinationAccount { get; set; } = new();
+
+    private DateTime? _transactionDate;
+
+    protected override async Task OnInitializedAsync()
+    {
+        OriginAccounts = (await AccountsService.SearchAllAsync())
+            .Where(x => x.Active)
+            .ToList();
+        OriginAccount = OriginAccounts[0];
+        
+        DestinationAccounts = (await AccountsService.SearchAllAsync())
+            .Where(x => x.Active)
+            .ToList();
+        DestinationAccount = DestinationAccounts[1];
+    }
+
+    void Cancel() => NavigationManager?.NavigateTo("/entries/list");
+
+    async Task Register(EditContext editContext)
+    {
+        User? user = await UserService.GetCurrentUser();
+
+        if (user == null)
+        {
+            Snackbar.Add("User not logged in");
+            NavigationManager?.NavigateTo("/logout");
+            return;
+        }
+        
+        if (!_transactionDate.HasValue)
+        {
+            return;
+        }
+
+        var description = OriginEntryData.Description + $" TR-C [{OriginAccount.Description} - {DestinationAccount.Description}]";
+
+        OriginEntryData.Description += $" TR-D [{OriginAccount.Description} - {DestinationAccount.Description}]";
+        OriginEntryData.Type = EntryType.Debit;
+        OriginEntryData.Account = OriginAccount;
+        OriginEntryData.DueDate = DateTime.SpecifyKind(_transactionDate.Value, DateTimeKind.Utc);
+        OriginEntryData.User = user;
+
+        DestinationEntryData = new Entry
+        {
+            Description = description,
+            Amount = OriginEntryData.Amount,
+            DueDate = DateTime.SpecifyKind(_transactionDate.Value, DateTimeKind.Utc),
+            Type = EntryType.Credit,
+            Account = DestinationAccount,
+            User = user
+        };
+
+        if (!editContext.Validate())
+        {
+            return;
+        }
+        
+        await ConfirmTransactionAsync();
+        
+        Snackbar.Add("Transaction between accounts confirmed", Severity.Success);
+        NavigationManager?.NavigateTo("/entries/list");
+    }
+
+    async Task ConfirmTransactionAsync()
+    {
+        var parameters = new DialogParameters<MessageDialog>
+        {
+            { x => x.TextTitle, "Confirmation" },
+            { x => x.TextMessage, $"Do you want to confirm the \"{OriginEntryData.Description}\" movement transaction?" },
+            { x => x.TextButton, "Confirm" },
+            { x => x.ColorButton, Color.Success },
+        };
+        
+        var dialog = await DialogService.ShowAsync<MessageDialog>("", parameters);
+        var result = await dialog.Result;
+        if (result is { Canceled: false })
+        {
+            await EntriesService.NewAsync(OriginEntryData);
+            await EntriesService.NewAsync(DestinationEntryData);
+            
+            await EntriesOperations.ConfirmTransaction(OriginEntryData);
+            await EntriesOperations.ConfirmTransaction(DestinationEntryData);
+        }
+    }
+}
