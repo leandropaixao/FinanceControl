@@ -49,6 +49,19 @@ builder.Services.AddMudServices();
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var userService = scope.ServiceProvider.GetRequiredService<IUserService<User>>();
+    if (!userService.HasUsers())
+    {
+        await userService.NewAsync(new User()
+        {
+            Username = "Admin",
+            PasswordHash = "123"
+        });
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

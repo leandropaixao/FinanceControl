@@ -7,5 +7,7 @@ namespace FinanceControl.Web.Services.Users
     {
         string GetNameCurrentUser();
         Task<User?> GetCurrentUser();
+
+        bool HasUsers();
     }
 }

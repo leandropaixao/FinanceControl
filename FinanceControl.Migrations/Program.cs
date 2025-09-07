@@ -7,7 +7,7 @@ IConfiguration config = new ConfigurationBuilder()
     .AddUserSecrets<FinanceControl.Web.SecretsReference>()
     .Build();
 
-string? connectionString = config["ConnectionStringsServer:DefaultConnection"];
+string? connectionString = config["ConnectionStrings:DefaultConnection"];
 
 var serviceProvider = new ServiceCollection()
     .AddDbContext<FinanceControl.Web.Data.AppDbContext>(options =>

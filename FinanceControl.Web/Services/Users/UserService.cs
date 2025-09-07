@@ -60,5 +60,6 @@ namespace FinanceControl.Web.Services.Users
 
         public string GetNameCurrentUser() => ((UserRepository)_repository).GetNameCurrentUser();
         public async Task<User?> GetCurrentUser() => await ((UserRepository)_repository).GetCurrentUser();
+        public bool HasUsers() => _repository.SearchAllAsync().Result.Any();
     }
 }

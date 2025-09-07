@@ -34,9 +34,9 @@ namespace FinanceControl.Web.Data.Repositories
 
             var identity = new ClaimsIdentity(new[]
             {
-            new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Role, user.Role)
-        }, "customAuth");
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Role, user.Role)
+            }, "customAuth");
 
             _currentUser = new ClaimsPrincipal(identity);
             return true;
@@ -53,6 +53,11 @@ namespace FinanceControl.Web.Data.Repositories
         }
 
         public string GetNameCurrentUser() => _currentUser.Identity?.Name ?? GUEST;
-        public async Task<User?> GetCurrentUser() => await _context.Users.FirstOrDefaultAsync(u => u.Username == GetNameCurrentUser());
+
+        public async Task<User?> GetCurrentUser()
+        {
+            var currentUser = GetNameCurrentUser();
+            return await _context.Users.FirstOrDefaultAsync(u => u.Username.Equals(currentUser));
+        }
     }
 }
